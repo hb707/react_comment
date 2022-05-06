@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-const {User, Comment} = require('../models')
+const { User, Comment } = require('../models')
 /**
  * 1.GET 댓글전체조회 limit
  * 2.POST 댓글쓰기
@@ -9,76 +9,77 @@ const {User, Comment} = require('../models')
  * 4.POST 댓글삭제
  */
 
-router.get('/list', async (req,res)=>{
+router.get('/list', async (req, res) => {
     try {
         const comment = await Comment.findAll({
-            include:{
+            include: {
                 model: User,
                 attributes: ['id', 'nickname']
             },
-            order:[['id','desc']]
+            order: [['id', 'desc']]
         })
 
+        console.log(comment)
         res.json({
-            result:comment,
+            result: comment,
         })
     } catch (e) {
         console.log(e)
         res.status(500).json({
-            result:null,
+            result: null,
         })
     }
 })
 
-router.post('/write', async (req,res)=>{
-    const {UserId, content} = req.body
+router.post('/write', async (req, res) => {
+    const { UserId, content } = req.body
 
     try {
-        const comment = await Comment.create({UserId, content})
+        const comment = await Comment.create({ UserId, content })
 
         res.json({
-            result:comment
+            result: comment
         })
     } catch (e) {
         res.status(500).json({
-            result:null
+            result: null
         })
     }
 })
 
-router.post('/modify/:id', async (req,res)=>{
+router.post('/modify/:id', async (req, res) => {
     const { id } = req.params
     const { content } = req.body
     try {
-        const [idx] = await Comment.update( { content }, { where:{ id } })
-        const comment = await Comment.findOne({ where:{id:idx} })
+        const [idx] = await Comment.update({ content }, { where: { id } })
+        const comment = await Comment.findOne({ where: { id: idx } })
 
         res.json({
-            result:comment
+            result: comment
         })
     } catch (e) {
         res.status(500).json({
-            result:null
+            result: null
         })
     }
 })
 
-router.post('/delete/:id', async (req,res)=>{
-    const {id} = req.params
+router.post('/delete/:id', async (req, res) => {
+    const { id } = req.params
 
     try {
-        const comment = await Comment.destroy({ 
+        const comment = await Comment.destroy({
             where: {
                 id
             }
         })
 
         res.json({
-            result:comment
+            result: comment
         })
     } catch (e) {
         res.status(500).json({
-            result:null
+            result: null
         })
     }
 })
